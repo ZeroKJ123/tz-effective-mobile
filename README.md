@@ -52,8 +52,8 @@ curl --location --request POST 'http://localhost:8000/api/tasks' \
 --header 'Content-Type: application/json' \
 --header 'Accept: application/json' \
 --data-raw '{
-    "title": "Реализовать CRUD для задач",
-    "description": "Нужно написать контроллер, модель и маршруты.",
+    "title": "Test title",
+    "description": "Test description",
     "status": "in-progress"
 }'
 ```
