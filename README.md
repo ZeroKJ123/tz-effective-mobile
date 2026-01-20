@@ -1,59 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## ⚙️ Установка и запуск
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Для развёртывания проекта на локальной машине необходимо иметь установленные **Docker** и **Composer**.
 
-## About Laravel
+1.  **Клонируйте репозиторий**
+    ```bash
+    git clone https://github.com/ZeroKJ123/tz-effective-mobile
+    cd tz-effective-mobile
+    ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+2.  **Создайте файл окружения**
+    Скопируйте конфигурационный файл `.env.example` в `.env`. В нём хранятся все настройки приложения.
+    ```bash
+    cp .env.example .env
+    ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+3.  **Установите зависимости PHP**
+    ```bash
+    composer install
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+4.  **Соберите и запустите Docker-контейнеры**
+    Эта команда запустит веб-сервер, базу данных и всё необходимое в фоновом режиме.
+    ```bash
+    ./vendor/bin/sail up -d --build
+    ```
 
-## Learning Laravel
+5.  **Сгенерируйте ключ приложения**
+    Это обязательный шаг для любого Laravel-приложения.
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+🎉 **Готово!** Приложение запущено и доступно по адресу `http://localhost`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+# 📖 Примеры использования API (To-Do List)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+В этом документе представлены примеры `curl` запросов для взаимодействия с API управления задачами.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 1. Создание новой задачи
 
-## Contributing
+-   **Эндпоинт:** `/api/tasks`
+-   **Метод:** `POST`
+-   **Описание:** Создает новую задачу со статусом "in-progress".
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+curl --location --request POST 'http://localhost:8000/api/tasks' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--data-raw '{
+    "title": "Реализовать CRUD для задач",
+    "description": "Нужно написать контроллер, модель и маршруты.",
+    "status": "in-progress"
+}'
+```
 
-## Code of Conduct
+### 2. Получение списка всех задач
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-   **Эндпоинт:** `/api/tasks`
+-   **Метод:** `GET`
+-   **Описание:** Возвращает массив всех существующих задач.
 
-## Security Vulnerabilities
+```bash
+curl --location --request GET 'http://localhost:8000/api/tasks' \
+--header 'Accept: application/json'
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Получение одной конкретной задачи
 
-## License
+-   **Эндпоинт:** `/api/tasks/{id}`
+-   **Метод:** `GET`
+-   **Описание:** Возвращает информацию о задаче с `id = 1`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+curl --location --request GET 'http://localhost:8000/api/tasks/1' \
+--header 'Accept: application/json'
+```
+
+### 4. Обновление задачи
+
+-   **Эндпоинт:** `/api/tasks/{id}`
+-   **Метод:** `PUT`
+-   **Описание:** Обновляет существующую задачу, меняя её статус на "completed".
+
+```bash
+curl --location --request PUT 'http://localhost:8000/api/tasks/1' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--data-raw '{
+    "status": "completed"
+}'
+```
+
+### 5. Удаление задачи
+
+-   **Эндпоинт:** `/api/tasks/{id}`
+-   **Метод:** `DELETE`
+-   **Описание:** Удаляет задачу с `id = 1`.
+
+```bash
+curl --location --request DELETE 'http://localhost:8000/api/tasks/1' \
+--header 'Accept: application/json'
+```
